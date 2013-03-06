@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  
+  require 'uri'
   Twilio_sid = 'ACee185e4fdf1ff6dac321d90841f23f25'
   Twilio_token = '6fcd44041f413e6db99c8513673e0a5a'
   Twilio_phone_number = "6479311279"
@@ -18,14 +18,15 @@ class ClientsController < ApplicationController
 
   def makecall
     @client = Client.find(params[:id])
- 
+    @url='http://twimlets.com/message?Message%5B0%5D=' + ERB::Util.url_encode( ',,Hello' + @client.name+',,' + @client.message) 
+    @url = @url + '&Message%5B1%5D=http%3A%2F%2Foccam.md%2Fhs.mp3&'
     begin
       @twilio_client = Twilio::REST::Client.new Twilio_sid, Twilio_token
       @twilio_client.account.calls.create(
       :from => "+1#{Twilio_phone_number}",
       :to => @client.phone,
-      :url => speak_client_url(@client)
-        )
+      :url => @url
+      )
     rescue StandardError => bang
       redirect_to :action => '.', 'msg' => "Error #{bang}"
       return
