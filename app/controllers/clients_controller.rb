@@ -4,19 +4,6 @@ class ClientsController < ApplicationController
   Twilio_token = '6fcd44041f413e6db99c8513673e0a5a'
   Twilio_phone_number = "6479311279"
   BASE_URL= 'localhost:3000/clients'
-
-  # GET /clients
-  # GET /clients.json
-  def index
-    @clients = Client.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @clients }
-    end
-
-  end
-
   def sms
     @client = Client.find(params[:id])
     
@@ -31,16 +18,13 @@ class ClientsController < ApplicationController
 
   def makecall
     @client = Client.find(params[:id])
-
-    # parameters sent to Twilio REST API
-    
  
     begin
       @twilio_client = Twilio::REST::Client.new Twilio_sid, Twilio_token
       @twilio_client.account.calls.create(
       :from => "+1#{Twilio_phone_number}",
       :to => @client.phone,
-      :url => 'http://localhost:3000/reminder.xml.builder'
+      :url => speak_client_path(@client)
         )
     rescue StandardError => bang
       redirect_to :action => '.', 'msg' => "Error #{bang}"
@@ -51,10 +35,28 @@ class ClientsController < ApplicationController
 # TwiML response that reads the reminder to the caller and presents a
 # short menu: 1. repeat the msg, 2. directions, 3. goodbye
   def speak
-  @post_to = BASE_URL + '/directions'
-  #render :action => "reminder.xml.builder", :layout => false
+    response = Twilio::TwiML::Response.new do |r|
+  r.Say 'hello there', :voice => 'woman'
+  end
+  puts response.text
+end
+
+
+
+  # GET /clients
+  # GET /clients.json
+  def index
+    @clients = Client.all
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @clients }
+    end
+
   end
 
+  
+  
   # GET /clients/1
   # GET /clients/1.json
   def show
@@ -89,7 +91,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save
-        format.html { redirect_to @client, notice: 'Client was successfully created.' }
+        format.html { redirect_to clients_path, notice: 'Client was successfully created.' }
         format.json { render json: @client, status: :created, location: @client }
       else
         format.html { render action: "new" }
@@ -105,7 +107,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.update_attributes(params[:client])
-        format.html { redirect_to @client, notice: 'Client was successfully updated.' }
+        format.html { redirect_to clients_path, notice: 'Client was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }

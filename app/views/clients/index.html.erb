@@ -1,23 +1,26 @@
-<h1>Listing clients</h1>
+<h4 style="color:red;">Thanks to HackerYou and Ruby Brigade!</h4>
 
-<table>
-  <tr>
+
+<table class="table table-striped table-bordered">
+  <tr style="text-align:center">
+    <th>Name</th>
     <th>Phone</th>
     <th>Message</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th>Voice</th>
+    <th style="text-align:centre;">Actions</th>
   </tr>
 
 <% @clients.each do |client| %>
   <tr>
+    <td><%= client.name %></td>
     <td><%= client.phone %></td>
     <td><%= client.message %></td>
-    <td><%= link_to 'Show', client %></td>
-    <td><%= link_to 'Edit', edit_client_path(client) %></td>
-    <td><%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-    <td><%= link_to 'SMS', sms_client_path(client) %></td>
-    <td><%= link_to 'Speak', makecall_client_path(client) %></td>
+    <td><%= client.voice %></td>
+    <td >
+    <%= link_to 'Edit', edit_client_path(client) , class: "btn" %>
+    <%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn"  %>
+    <%= link_to 'SMS', sms_client_path(client), class: "btn btn-success"  %>
+    <%= link_to 'Call & Speak', makecall_client_path(client), class: "btn btn-danger" %></td>
  
   </tr>
 <% end %>
@@ -25,4 +28,4 @@
 
 <br />
 
-<%= link_to 'New Client', new_client_path %>
+<%= link_to 'Add Client', new_client_path, class:"btn btn-large btn-primary btn-block" %>

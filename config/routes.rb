@@ -5,7 +5,7 @@ Twilio2::Application.routes.draw do
 
   match '/clients/sms/:id' => 'clients#sms', as: :sms_client
   match '/clients/makecall/:id' => 'clients#makecall', as: :makecall_client
-  match '/clients/speak' => 'clients#speak', as: :speak_client
+  match '/clients/speak/:id' => 'clients#speak', as: :speak_client
 resources :clients
   # The priority is based upon order of creation:
   # first created -> highest priority.
