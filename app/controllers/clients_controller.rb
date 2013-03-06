@@ -1,5 +1,9 @@
 class ClientsController < ApplicationController
   
+  Twilio_sid = 'ACee185e4fdf1ff6dac321d90841f23f25'
+  Twilio_token = '6fcd44041f413e6db99c8513673e0a5a'
+  Twilio_phone_number = "6479311279"
+  BASE_URL= 'localhost:3000/clients'
 
   # GET /clients
   # GET /clients.json
@@ -13,25 +17,43 @@ class ClientsController < ApplicationController
 
   end
 
-
-  def send_text_message
+  def sms
     @client = Client.find(params[:id])
-    number_to_send_to = @client.phone
- 
-    twilio_sid = 'ACee185e4fdf1ff6dac321d90841f23f25'
-    twilio_token = '6fcd44041f413e6db99c8513673e0a5a'
-    twilio_phone_number = "6479311279"
- 
-    @twilio_client = Twilio::REST::Client.new twilio_sid, twilio_token
+    
+    @twilio_client = Twilio::REST::Client.new Twilio_sid, Twilio_token
  
     @twilio_client.account.sms.messages.create(
-      :from => "+1#{twilio_phone_number}",
-      :to => number_to_send_to,
+      :from => "+1#{Twilio_phone_number}",
+      :to => @client.phone,
       :body => @client.message
     )
   end
 
+  def makecall
+    @client = Client.find(params[:id])
 
+    # parameters sent to Twilio REST API
+    
+ 
+    begin
+      @twilio_client = Twilio::REST::Client.new Twilio_sid, Twilio_token
+      @twilio_client.account.calls.create(
+      :from => "+1#{Twilio_phone_number}",
+      :to => @client.phone,
+      :url => 'http://localhost:3000/reminder.xml.builder'
+        )
+    rescue StandardError => bang
+      redirect_to :action => '.', 'msg' => "Error #{bang}"
+      return
+    end
+ 
+  end
+# TwiML response that reads the reminder to the caller and presents a
+# short menu: 1. repeat the msg, 2. directions, 3. goodbye
+  def speak
+  @post_to = BASE_URL + '/directions'
+  #render :action => "reminder.xml.builder", :layout => false
+  end
 
   # GET /clients/1
   # GET /clients/1.json
