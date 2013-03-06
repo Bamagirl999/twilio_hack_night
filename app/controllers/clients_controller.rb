@@ -24,7 +24,7 @@ class ClientsController < ApplicationController
       @twilio_client.account.calls.create(
       :from => "+1#{Twilio_phone_number}",
       :to => @client.phone,
-      :url => speak_client_path(@client)
+      :url => speak_client_url(@client)
         )
     rescue StandardError => bang
       redirect_to :action => '.', 'msg' => "Error #{bang}"
@@ -38,7 +38,7 @@ class ClientsController < ApplicationController
     response = Twilio::TwiML::Response.new do |r|
   r.Say 'hello there', :voice => 'woman'
   end
-  puts response.text
+  @xml=response.text
 end
 
 
