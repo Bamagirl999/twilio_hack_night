@@ -12,7 +12,7 @@ class ClientsController < ApplicationController
     @twilio_client.account.sms.messages.create(
       :from => "+1#{Twilio_phone_number}",
       :to => @client.phone,
-      :body => @client.message
+      :body => @client.message[0..139]
     )
   end
 
