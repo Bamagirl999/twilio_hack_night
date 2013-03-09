@@ -1,7 +1,7 @@
 class ClientsController < ApplicationController
   require 'uri'
   Twilio_sid = 'ACee185e4fdf1ff6dac321d90841f23f25'
-  Twilio_token = '6fcd44041f413e6db99c8513673e0a5a'
+  Twilio_token = ''
   Twilio_phone_number = "6479311279"
   BASE_URL= 'localhost:3000/clients'
   def sms
